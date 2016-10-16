@@ -85,15 +85,15 @@ function Enemy(canvas)
     {//敵を生み出す
         x = canvas.width*Math.random();
         y = -er;
-        vx = 0;
+        vx = 150*Math.random() - 50;
         vy = 150*Math.random() + 50;
     };
     spawn();
 
-    var lifeProp = [];
-    lifeProp[3] = { color: 'white',  fireP: 0.01, numB:  4, daze: 0 };
-    lifeProp[2] = { color: 'yellow', fireP: 0.8, numB: 8, daze: 8 };
-    lifeProp[1] = { color: 'red',    fireP: 0.1,  numB: 12, daze: 18 };
+    var lifeProp = [];//{color:色, fireP:, numB:敵の玉出現数, daze:敵の振動}
+    lifeProp[3] = { color: 'white',  fireP: 1, numB:  1, daze: 0 };
+    lifeProp[2] = { color: 'yellow', fireP: 0.5, numB: 5, daze: 10 };
+    lifeProp[1] = { color: 'red',    fireP: 0.1,  numB: 8, daze: 18 };
 
     this.draw = function(ctx)
     {
@@ -201,8 +201,8 @@ function Enemy(canvas)
         }
         bullets.forEach(function(bullet)
         {
-            bullet.x += dt*bullet.vx/10000;
-            bullet.y += dt*bullet.vy/10000;
+            bullet.x += dt*bullet.vx/1000;
+            bullet.y += dt*bullet.vy/1000;
             bullet.life -= dt/100/10.0;
         });
 
@@ -337,7 +337,7 @@ window.onload = function()
             bullets = [];
             init(canvas, numEnemies);
             status = Status.countDown;
-            count = 3;
+            count = 3;//開始のカウント
             (function()
             {
                 setTimeout(function loop()
@@ -440,7 +440,7 @@ window.onload = function()
             }
         });
 
-        if (drawPlayer)
+        if (drawPlayer)//乗り物形作成
         {
             ctx.beginPath();
             ctx.fillStyle = 'green';
@@ -479,7 +479,7 @@ window.onload = function()
             }
         });
 
-        if (drawStatus)
+        if (drawStatus)//ステータス位置
         {
             var remainingEnemies = enemies.filter(function(enemy)
             {
