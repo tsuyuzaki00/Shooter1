@@ -3,7 +3,8 @@
 <title>Bullets shooter</title>
 
 <style>
-canvas {
+canvas
+{
     background: black;
 }
 </style>
@@ -47,7 +48,8 @@ var deadAudio = document.getElementById('deadAudio');
 var bgmAudio = document.getElementById('bgmAudio');
 var muteSE = true;
 
-function playSE(audio) {
+function playSE(audio)
+{
     if (muteSE) return;
     audio.currentTime = 0;
     audio.play();
@@ -55,7 +57,8 @@ function playSE(audio) {
 
 var bgReady = false;
 var bgImg = new Image();
-bgImg.onload = function() {
+bgImg.onload = function()
+{
     bgReady = true;
 };
 // https://www.nasa.gov/mission_pages/hubble/multimedia/index.html
@@ -64,7 +67,8 @@ bgImg.src = 'hubble_friday_05062016.jpg';
 bgmAudio.loop = 'true';
 bgmAudio.play();
 
-function Enemy(canvas) {
+function Enemy(canvas)
+{
 
     var x, y;//敵の最初の位置
     var vx, vy;//敵の移動
@@ -77,7 +81,8 @@ function Enemy(canvas) {
     var er = 20; // enemy radius
     var br = 10; // bullet radius
 
-    function spawn() {//敵を生み出す
+    function spawn()
+    {//敵を生み出す
         x = canvas.width*Math.random();
         y = -er;
         vx = 0;
@@ -90,18 +95,22 @@ function Enemy(canvas) {
     lifeProp[2] = { color: 'yellow', fireP: 0.8, numB: 8, daze: 8 };
     lifeProp[1] = { color: 'red',    fireP: 0.1,  numB: 12, daze: 18 };
 
-    this.draw = function(ctx) {
+    this.draw = function(ctx)
+    {
 
-        if (dying) {
+        if (dying)
+        {
             explode.draw(ctx, x, y);
-        } else if (1 <= life) {
+        } else if (1 <= life)
+        {
             ctx.beginPath();
             ctx.fillStyle = lifeProp[life].color;
             ctx.arc(x, y, er, 0, Math.PI*2, false);
             ctx.fill();
         }
 
-        bullets.forEach(function(bullet) {
+        bullets.forEach(function(bullet)
+        {
             var x = bullet.x;
             var y = bullet.y;
             ctx.beginPath();
@@ -111,9 +120,11 @@ function Enemy(canvas) {
         });
     };
 
-    this.fire = function() {
+    this.fire = function()
+    {
         var n = lifeProp[life].numB;
-        for (var i = 0; i < n; i++) {
+        for (var i = 0; i < n; i++)
+        {
             var th = i*2*Math.PI/n;
             var vx = 30*Math.cos(th);
             var vy = 30*Math.sin(th);
@@ -123,29 +134,36 @@ function Enemy(canvas) {
         playSE(enemyShotAudio);
     };
 
-    this.fireAtRandom = function() {
-        if (Math.random() < lifeProp[life].fireP) {
+    this.fireAtRandom = function()
+    {
+        if (Math.random() < lifeProp[life].fireP)
+        {
             this.fire();
             return true;
         }
         return false;
     };
 
-    this.hit = function(tx, ty, r) {
+    this.hit = function(tx, ty, r)
+    {
         var dx = tx - x;
         var dy = ty - y;
-        if (dx*dx + dy*dy < (er + r)*(er + r)) {
+        if (dx*dx + dy*dy < (er + r)*(er + r))
+        {
             return true;
         }
         return false;
     };
 
-    this.bulletsHit = function(tx, ty, r) {
-        for (var i = 0; i < bullets.length; i++) {
+    this.bulletsHit = function(tx, ty, r)
+    {
+        for (var i = 0; i < bullets.length; i++)
+        {
             var bullet = bullets[i];
             var dx = tx - bullet.x;
             var dy = ty - bullet.y;
-            if (dx*dx + dy*dy < (br + r)*(br + r)) {
+            if (dx*dx + dy*dy < (br + r)*(br + r))
+            {
                 return true;
             }
         }
@@ -155,13 +173,15 @@ function Enemy(canvas) {
     var lastTick;
     var th = Math.PI*Math.random();
 
-    this.update = function() {
-
-        if (dying && !explode.update()) {
+    this.update = function()
+    {
+        if (dying && !explode.update())
+        {
             dying = false;
         }
 
-        if (lastTick == undefined) {
+        if (lastTick == undefined)
+        {
             lastTick = Date.now();
         }
 
@@ -174,51 +194,62 @@ function Enemy(canvas) {
             y += dt*vy/800;
             if (x < -er
             || canvas.width + er < x
-            || canvas.height + er < y) {
+            || canvas.height + er < y)
+            {
                 spawn();
             }
         }
-        bullets.forEach(function(bullet) {
+        bullets.forEach(function(bullet)
+        {
             bullet.x += dt*bullet.vx/10000;
             bullet.y += dt*bullet.vy/10000;
             bullet.life -= dt/100/10.0;
         });
 
-        bullets = bullets.filter(function(bullet) {
+        bullets = bullets.filter(function(bullet)
+        {
             return 0 < bullet.life;
         });
         lastTick = tick;
     };
 
-    this.die = function() {
+    this.die = function()
+    {
         dying = true;
         playSE(explosionAudio);
         explode.reset();
     };
 
-    this.damage = function() {
-        if (--life <= 0) {
+    this.damage = function()
+    {
+        if (--life <= 0)
+        {
             this.die();
-        } else {
+        } else
+        {
             this.fire();
         }
     };
 
-    this.isAlive = function() {
+    this.isAlive = function()
+    {
         return 1 <= life;
     };
 }
 
 var enemies;
 
-function init(canvas, n) {
+function init(canvas, n)
+{
     enemies = [];
-    for (var i = 0; i < n; i++) {
+    for (var i = 0; i < n; i++)
+    {
         enemies.push(new Enemy(canvas));
     }
 }
 
-window.onload = function() {
+window.onload = function()
+{
 
     var canvas = document.getElementsByTagName('canvas')[0];
     var ctx = canvas.getContext('2d');
@@ -237,24 +268,27 @@ window.onload = function() {
     var numEnemies;
 
     var keys = [];
-    document.onkeydown = function(e) {
+    document.onkeydown = function(e)
+    {
         if (!keys[e.keyCode]) keys[e.keyCode] = 0;
         keys[e.keyCode]++;
     };
-    document.onkeyup = function(e) {
+    document.onkeyup = function(e)
+    {
         keys[e.keyCode] = 0;
     };
 
     var startTick = Date.now();
 
-    (function loop() {
-
+    (function loop()
+    {
         var tick = Date.now();
 
         ctx.save();
         ctx.clearRect(0, 0, w, h);
 
-        if (bgReady) {
+        if (bgReady)
+        {
             var sx = (bgImg.width - canvas.width)/2;
             var dy = (tick - startTick)/100 % bgImg.height;
 
@@ -267,15 +301,19 @@ window.onload = function() {
                 0, 0, canvas.width, dy);
         }
 
-        if (keys[32 /*space*/] == 1) {
-            if (status == Status.title) {
+        if (keys[32 /*space*/] == 1)
+        {
+            if (status == Status.title)
+            {
                 status = Status.toStart;
                 muteSE = false;
             }
-            if (status == Status.gameOver) {
+            if (status == Status.gameOver)
+            {
                 status = Status.title;
             }
-            if (status == Status.gameClear) {
+            if (status == Status.gameClear)
+            {
                 status = Status.toStart;
                 muteSE = false;
             }
@@ -287,7 +325,8 @@ window.onload = function() {
         var drawPlayer = false;
         var drawStatus = false;
 
-        switch (status) {
+        switch (status)
+        {
         case Status.title:
             msg = 'Press space to start';
             numEnemies = 3;
@@ -299,11 +338,15 @@ window.onload = function() {
             init(canvas, numEnemies);
             status = Status.countDown;
             count = 3;
-            (function() {
-                setTimeout(function loop() {
-                    if (--count < 0) {
+            (function()
+            {
+                setTimeout(function loop()
+                {
+                    if (--count < 0)
+                    {
                         status = Status.inGame;
-                    } else {
+                    } else
+                    {
                         setTimeout(loop, 1000);
                     }
                 }, 1000);
@@ -327,7 +370,8 @@ window.onload = function() {
             break;
         case Status.dying:
             explode.draw(ctx, myX, myY);
-            if (!explode.update()) {
+            if (!explode.update())
+            {
                 status = Status.gameOver;
                 muteSE = true;
             }
@@ -343,20 +387,26 @@ window.onload = function() {
             console.log('unknown status: ' + status);
         }
 
-        if (drawPlayer) {
+        if (drawPlayer)
+        {
             if (keys[39 /*Right*/]) { myX += 5; }
             if (keys[37 /*Left */]) { myX -= 5; }
             if (keys[38 /*Up   */]) { myY -= 5; }
             if (keys[40 /*Down */]) { myY += 5; }
-            if (keys[32 /* space */]) {
-                if (lastShoot == undefined || 200 < tick - lastShoot) {
-                    var bulletNotInUse = bullets.filter(function(bullet) {
+            if (keys[32 /* space */])
+            {
+                if (lastShoot == undefined || 200 < tick - lastShoot)
+                {
+                    var bulletNotInUse = bullets.filter(function(bullet)
+                    {
                         return !bullet.inUse;
                     });
                     var bullet;
-                    if (0 < bulletNotInUse.length) {
+                    if (0 < bulletNotInUse.length)
+                    {
                         bullet = bulletNotInUse[0];
-                    } else {
+                    } else
+                    {
                         bullet = {};
                         bullets.push(bullet);
                     }
@@ -372,22 +422,26 @@ window.onload = function() {
 
         var myR = 3;
 
-        drawEnemies && enemies.forEach(function(enemy) {
+        drawEnemies && enemies.forEach(function(enemy)
+        {
             enemy.update();
-            if (enemy.isAlive()) {
+            if (enemy.isAlive())
+            {
                 enemy.fireAtRandom();
             }
             enemy.draw(ctx);
             if (status != Status.inGame) return;
             if ((enemy.isAlive() && enemy.hit(myX, myY, myR))
-            || enemy.bulletsHit(myX, myY, myR)) {
+            || enemy.bulletsHit(myX, myY, myR))
+            {
                 explode.reset();
                 status = Status.dying;
                 playSE(deadAudio);
             }
         });
 
-        if (drawPlayer) {
+        if (drawPlayer)
+        {
             ctx.beginPath();
             ctx.fillStyle = 'green';
             ctx.moveTo(myX, myY - 10);
@@ -400,7 +454,8 @@ window.onload = function() {
             ctx.fill();
         }
 
-        bullets && bullets.forEach(function(bullet) {
+        bullets && bullets.forEach(function(bullet)
+        {
             if (!bullet.inUse) return;
 
             ctx.beginPath();
@@ -409,23 +464,29 @@ window.onload = function() {
             var y = bullet.y;
             ctx.arc(x, y, 10, 60, Math.PI*2, false);
             ctx.fill();
-            drawEnemies && enemies.forEach(function(enemy) {
-                if (enemy.isAlive() && enemy.hit(x, y, 10)) {
+            drawEnemies && enemies.forEach(function(enemy)
+            {
+                if (enemy.isAlive() && enemy.hit(x, y, 10))
+                {
                     enemy.damage();
                     bullet.inUse = false;
                 }
             });
             bullet.y += bullet.v;
-            if (bullet.y < 0) {
+            if (bullet.y < 0)
+            {
                 bullet.inUse = false;
             }
         });
 
-        if (drawStatus) {
-            var remainingEnemies = enemies.filter(function(enemy) {
+        if (drawStatus)
+        {
+            var remainingEnemies = enemies.filter(function(enemy)
+            {
                 return enemy.isAlive();
             }).length;
-            if (status == Status.inGame && remainingEnemies <= 0) {
+            if (status == Status.inGame && remainingEnemies <= 0)
+            {
                 status = Status.gameClear;
                 muteSE = true;
                 numEnemies++;
@@ -438,7 +499,8 @@ window.onload = function() {
             ctx.fillText(s, canvas.width - 10,  0);
         }
 
-        if (msg) {
+        if (msg)
+        {
             ctx.font = '40pt Calibri';
             ctx.fillStyle = 'white';
             ctx.textAlign = 'center';
