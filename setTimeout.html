@@ -1,0 +1,17 @@
+<!DOCTYPE html>//HTML5を使うよ
+<meta charset="UTG-8">//UTG-8のテキストファイルを使うよ
+<title>test of timeout</title>//バーの名前
+<script>//javascriptテキスト
+function aaa()
+{
+  console.log("aaa!");
+}
+
+function start()
+{
+  console.log("clicked!");
+  setTimeout(aaa, 3000);//3000秒後発動
+  console.log("alarmed!");
+}
+</script>
+<input type ="button" value="click" onclick="start();"/>

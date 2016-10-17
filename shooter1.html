@@ -93,7 +93,7 @@ function Enemy(canvas)
     var lifeProp = [];//{color:色, fireP:, numB:敵の玉出現数, daze:敵の振動}
     lifeProp[3] = { color: 'white',  fireP: 1, numB:  1, daze: 0 };
     lifeProp[2] = { color: 'yellow', fireP: 0.5, numB: 5, daze: 10 };
-    lifeProp[1] = { color: 'red',    fireP: 0.1,  numB: 8, daze: 18 };
+    lifeProp[1] = { color: 'red',    fireP: 0.1,  numB: 8, daze: 15 };
 
     this.draw = function(ctx)
     {
@@ -412,7 +412,7 @@ window.onload = function()
                     }
                     bullet.x = myX;
                     bullet.y = myY;
-                    bullet.v = 15;//玉発射スピード
+                    bullet.v = -15;//玉発射スピード
                     bullet.inUse = true;
                     playSE(shotAudio);
                     lastShoot = tick;
