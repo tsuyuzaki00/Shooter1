@@ -4,16 +4,20 @@
 <script type="text/javascript">
 <!--
 // 匿名関数内で実行
-(function (){
+(function ()
+{
 
 	// ------------------------------------------------------------
 	// エレメントの内容を文字列として取得する関数
 	// ------------------------------------------------------------
-	function ElementGetTextContent(element){
-		if(element.textContent !== undefined){
+	function ElementGetTextContent(element)
+	{
+		if(element.textContent !== undefined)
+		{
 			return element.textContent;
 		}
-		if(element.innerText !== undefined){
+		if(element.innerText !== undefined)
+		{
 			return element.innerText;
 		}
 
@@ -23,11 +27,14 @@
 	// ------------------------------------------------------------
 	// エレメントに文字列をセットして、テキストノードを構築する関数
 	// ------------------------------------------------------------
-	function ElementSetTextContent(element,str){
-		if(element.textContent !== undefined){
+	function ElementSetTextContent(element,str)
+	{
+		if(element.textContent !== undefined)
+		{
 			element.textContent = str;
 		}
-		if(element.innerText !== undefined){
+		if(element.innerText !== undefined)
+		{
 			element.innerText = str;
 		}
 	}
@@ -47,29 +54,34 @@
 	// ------------------------------------------------------------
 	// ゲームパッドトレース
 	// ------------------------------------------------------------
-	var gamepad_trace = new (function(){
+	var gamepad_trace = new (function()
+	{
 		var _list = new Array();
 		var _gamepads = new Array();
 
 		// ------------------------------------------------------------
 		// ゲームパッドを登録
 		// ------------------------------------------------------------
-		this.attach = function(gamepad){
-			if(!(_list.length)){
+		this.attach = function(gamepad)
+		{
+			if(!(_list.length))
+			{
 				ElementSetTextContent(element_container,"");
 			}
 
-			if(!_gamepads[gamepad.index]){
+			if(!_gamepads[gamepad.index])
+			{
 				var element0 = document.createElement("div");
 				var element1 = document.createElement("pre");
 				element0.style.cssText = "border:1px solid #ccc; margin-bottom:10px;";
 				element1.style.cssText = "margin:10px;";
 				element0.appendChild(element1);
 				element_container.appendChild(element0);
-				_list.push({
+				_list.push(
+					{
 					element:element1,
 					gamepad:gamepad
-				});
+				  });
 			}
 			_gamepads[gamepad.index] = gamepad;
 		};
@@ -77,13 +89,16 @@
 		// ------------------------------------------------------------
 		// ゲームパッドを除外
 		// ------------------------------------------------------------
-		this.remove = function(gamepad){
+		this.remove = function(gamepad)
+		{
 			delete _gamepads[gamepad.index];
 
 			var i;
 			var num = _list.length;
-			for(i=0;i<num;i++){
-				if(_list[i].gamepad.index == gamepad.index){
+			for(i=0;i<num;i++)
+			{
+				if(_list[i].gamepad.index == gamepad.index)
+				{
 					_list[i].element.parentNode.style.color = "#888";
 				}
 			}
@@ -92,10 +107,12 @@
 		// ------------------------------------------------------------
 		// 実行
 		// ------------------------------------------------------------
-		this.execute = function(){
+		this.execute = function()
+		{
 
 			// Gamepad オブジェクトを更新する
-			if(navigator.getGamepads){
+			if(navigator.getGamepads)
+			{
 				navigator.getGamepads();
 			}
 
@@ -103,7 +120,8 @@
 			var i;
 			var num = _list.length;
 
-			for(i=0;i<num;i++){
+			for(i=0;i<num;i++)
+			{
 				var element = _list[i].element;
 				var gamepad = _list[i].gamepad;
 				var str = "";
@@ -117,7 +135,8 @@
 				var j;
 				var n = buttons.length;
 				str += "buttons: {\n";
-				for(j=0;j<n;j++){
+				for(j=0;j<n;j++)
+				{
 					var button = buttons[j];
 					str += "  \"" + j + "\": { pressed:" + (button.pressed) + " , value:" + (button.value) + " }\n";
 				}
@@ -127,12 +146,14 @@
 				var j;
 				var n = axes.length;
 				str += "axes: {\n";
-				for(j=0;j<n;j++){
+				for(j=0;j<n;j++)
+				{
 					str += "  \"" + j + "\": " + (axes[j]) + "\n";
 				}
 				str += "}";
 
-				if(ElementGetTextContent(element) != str){
+				if(ElementGetTextContent(element) != str)
+				{
 					ElementSetTextContent(element,str);
 				}
 			}
@@ -142,12 +163,15 @@
 		// 初期化
 		// ------------------------------------------------------------
 		// ゲームパッドリストを取得する
-		if(navigator.getGamepads){
+		if(navigator.getGamepads)
+		{
 			var gamepads = navigator.getGamepads();
 			var i;
 			var num = gamepads.length;
-			for(i=0;i<num;i++){
-				if(gamepads[i]){
+			for(i=0;i<num;i++)
+			{
+				if(gamepads[i])
+				{
 					this.attach(gamepads[i]);
 				}
 			}
@@ -158,21 +182,24 @@
 	// ------------------------------------------------------------
 	// ゲームパッドを接続すると実行されるイベント
 	// ------------------------------------------------------------
-	window.addEventListener("gamepadconnected",function(e){
+	window.addEventListener("gamepadconnected",function(e)
+	{
 		gamepad_trace.attach(e.gamepad);
 	});
 
 	// ------------------------------------------------------------
 	// ゲームパッドの接続を解除すると実行されるイベント
 	// ------------------------------------------------------------
-	window.addEventListener("gamepaddisconnected",function(e){
+	window.addEventListener("gamepaddisconnected",function(e)
+	{
 		gamepad_trace.remove(e.gamepad);
 	});
 
 	// ------------------------------------------------------------
 	// 一定時間隔で、繰り返し実行される関数
 	// ------------------------------------------------------------
-	setInterval(function(){
+	setInterval(function()
+	{
 		gamepad_trace.execute();
 	},1000/60);
 
