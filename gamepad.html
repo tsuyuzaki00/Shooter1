@@ -1,123 +1,181 @@
-<html>
-  <body>
+<div id = "container_01" style = "border:1px solid #000; padding:10px;">
+</div>
 
-    <pre id="aaa"></pre>
+<script type="text/javascript">
+<!--
+// 匿名関数内で実行
+(function (){
 
-    <script type="text/javascript">
-    <!--
+	// ------------------------------------------------------------
+	// エレメントの内容を文字列として取得する関数
+	// ------------------------------------------------------------
+	function ElementGetTextContent(element){
+		if(element.textContent !== undefined){
+			return element.textContent;
+		}
+		if(element.innerText !== undefined){
+			return element.innerText;
+		}
 
-	// 匿名関数を即時実行
-	(function(){
+		return "";
+	}
+
+	// ------------------------------------------------------------
+	// エレメントに文字列をセットして、テキストノードを構築する関数
+	// ------------------------------------------------------------
+	function ElementSetTextContent(element,str){
+		if(element.textContent !== undefined){
+			element.textContent = str;
+		}
+		if(element.innerText !== undefined){
+			element.innerText = str;
+		}
+	}
+
+	// ------------------------------------------------------------
+	// エレメントを取得
+	// ------------------------------------------------------------
+	var element_container = document.getElementById("container_01");
+
+	if(!(window.Gamepad)){
+		ElementSetTextContent(element_container,"Gamepad API に未対応");
+		return;
+	}else{
+		ElementSetTextContent(element_container,"ゲームパッドを再接続して、何らかの入力操作を行います。");
+	}
+
+	// ------------------------------------------------------------
+	// ゲームパッドトレース
+	// ------------------------------------------------------------
+	var gamepad_trace = new (function(){
+		var _list = new Array();
+		var _gamepads = new Array();
 
 		// ------------------------------------------------------------
-		// Gemapad API に対応しているか調べる
+		// ゲームパッドを登録
 		// ------------------------------------------------------------
-		if(!(window.Gamepad)) return;
-    console.log(window.Gamepad);
-		if(!(navigator.getGamepads)) return;
-    console.log(navigator.Gamepad);
-
-		// ------------------------------------------------------------
-		// "aaa" という ID 属性のエレメントを取得する
-		// ------------------------------------------------------------
-		var element = document.getElementById("aaa");
-
-		// ------------------------------------------------------------
-		// 一定時間隔で、繰り返し実行される関数
-		// ------------------------------------------------------------
-		setInterval(function(){
-			var str = "";
-
-			// ゲームパッドリストを取得する
-			var gamepad_list = navigator.getGamepads();
-      console.log(gamepad_list);
-
-			// ゲームパッドリスト内のアイテム総数を取得する
-			var num = gamepad_list.length;
-      console.log(num);
-
-			var i;
-			for(i=0;i < num;i++){
-				// ------------------------------------------------------------
-				// Gamepad オブジェクトを取得する
-				// ------------------------------------------------------------
-				var gamepad = gamepad_list[i];
-				if(!gamepad) continue;
-
-				// ------------------------------------------------------------
-				// ゲームパッドのインデックス値
-				// ------------------------------------------------------------
-				str += "index: " + gamepad.index + "\n";
-        console.log(gamepad.index);
-
-				// ------------------------------------------------------------
-				// タイムスタンプ情報
-				// ------------------------------------------------------------
-				str += "timestamp: " + gamepad.timestamp + "\n";
-
-				// ------------------------------------------------------------
-				// ゲームパッドの識別名
-				// ------------------------------------------------------------
-				str += "id: \"" + gamepad.id + "\"\n";
-
-				// ------------------------------------------------------------
-				// ゲームパッドの物理的な接続状態
-				// ------------------------------------------------------------
-				str += "connected: " + gamepad.connected + "\n";
-
-				// ------------------------------------------------------------
-				// マッピングタイプ情報
-				// ------------------------------------------------------------
-				str += "mapping: \"" + gamepad.mapping + "\"\n";
-
-				// ------------------------------------------------------------
-				// ボタンリスト
-				// ------------------------------------------------------------
-				var buttons = gamepad.buttons;
-
-				str += "buttons: {\n";
-				var j;
-				var n = buttons.length;
-				for(j=0;j < n;j++){
-					// GamepadButton オブジェクトを取得
-					var button = buttons[j];
-
-					str += "  \"" + j + "\": { ";
-
-					// ボタン押下状態
-					str += "pressed:" + button.pressed + " , ";
-
-					// ボタン入力強度
-					str += "value:" + button.value + " }\n";
-				}
-				str += "}\n";
-
-				// ------------------------------------------------------------
-				// 軸リスト
-				// ------------------------------------------------------------
-				var axes = gamepad.axes;
-
-				str += "axes: {\n";
-				var j;
-				var n = axes.length;
-				for(j=0;j < n;j++){
-					str += "  \"" + j + "\": ";
-
-					// 入力強度
-					str += axes[j] + "\n";
-				}
-				str += "}\n";
-				str += "\n ----- \n\n";
+		this.attach = function(gamepad){
+			if(!(_list.length)){
+				ElementSetTextContent(element_container,"");
 			}
 
-			element.textContent = str;
+			if(!_gamepads[gamepad.index]){
+				var element0 = document.createElement("div");
+				var element1 = document.createElement("pre");
+				element0.style.cssText = "border:1px solid #ccc; margin-bottom:10px;";
+				element1.style.cssText = "margin:10px;";
+				element0.appendChild(element1);
+				element_container.appendChild(element0);
+				_list.push({
+					element:element1,
+					gamepad:gamepad
+				});
+			}
+			_gamepads[gamepad.index] = gamepad;
+		};
 
-		},1000/60);
+		// ------------------------------------------------------------
+		// ゲームパッドを除外
+		// ------------------------------------------------------------
+		this.remove = function(gamepad){
+			delete _gamepads[gamepad.index];
+
+			var i;
+			var num = _list.length;
+			for(i=0;i<num;i++){
+				if(_list[i].gamepad.index == gamepad.index){
+					_list[i].element.parentNode.style.color = "#888";
+				}
+			}
+		};
+
+		// ------------------------------------------------------------
+		// 実行
+		// ------------------------------------------------------------
+		this.execute = function(){
+
+			// Gamepad オブジェクトを更新する
+			if(navigator.getGamepads){
+				navigator.getGamepads();
+			}
+
+			// 入力情報を出力
+			var i;
+			var num = _list.length;
+
+			for(i=0;i<num;i++){
+				var element = _list[i].element;
+				var gamepad = _list[i].gamepad;
+				var str = "";
+				str += "index:" + (gamepad.index) + "\n";
+				str += "timestamp:" + (gamepad.timestamp) + "\n";
+				str += "id:\"" + (gamepad.id) + "\"\n";
+				str += "connected: " + (gamepad.connected) + "\n";
+				str += "mapping: \"" + (gamepad.mapping) + "\"\n";
+
+				var buttons = gamepad.buttons;
+				var j;
+				var n = buttons.length;
+				str += "buttons: {\n";
+				for(j=0;j<n;j++){
+					var button = buttons[j];
+					str += "  \"" + j + "\": { pressed:" + (button.pressed) + " , value:" + (button.value) + " }\n";
+				}
+				str += "}\n";
+
+				var axes = gamepad.axes;
+				var j;
+				var n = axes.length;
+				str += "axes: {\n";
+				for(j=0;j<n;j++){
+					str += "  \"" + j + "\": " + (axes[j]) + "\n";
+				}
+				str += "}";
+
+				if(ElementGetTextContent(element) != str){
+					ElementSetTextContent(element,str);
+				}
+			}
+		};
+
+		// ------------------------------------------------------------
+		// 初期化
+		// ------------------------------------------------------------
+		// ゲームパッドリストを取得する
+		if(navigator.getGamepads){
+			var gamepads = navigator.getGamepads();
+			var i;
+			var num = gamepads.length;
+			for(i=0;i<num;i++){
+				if(gamepads[i]){
+					this.attach(gamepads[i]);
+				}
+			}
+		}
 
 	})();
 
-    //-->
-    </script>
+	// ------------------------------------------------------------
+	// ゲームパッドを接続すると実行されるイベント
+	// ------------------------------------------------------------
+	window.addEventListener("gamepadconnected",function(e){
+		gamepad_trace.attach(e.gamepad);
+	});
 
-  </body>
-</html>
+	// ------------------------------------------------------------
+	// ゲームパッドの接続を解除すると実行されるイベント
+	// ------------------------------------------------------------
+	window.addEventListener("gamepaddisconnected",function(e){
+		gamepad_trace.remove(e.gamepad);
+	});
+
+	// ------------------------------------------------------------
+	// 一定時間隔で、繰り返し実行される関数
+	// ------------------------------------------------------------
+	setInterval(function(){
+		gamepad_trace.execute();
+	},1000/60);
+
+})();
+//-->
+</script>
