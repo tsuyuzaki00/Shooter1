@@ -343,7 +343,7 @@ window.onload = function()
             bullets = [];
             init(canvas, numEnemies);
             status = Status.countDown;
-            count = 3;//開始のカウント
+            count = 1;//開始のカウント
             (function()
             {
                 setTimeout(function loop()
@@ -417,7 +417,7 @@ window.onload = function()
                         bullets.push(bullet);
                     }
                     bullet.x = myX;
-                    bullet.y = myY;
+                    bullet.y = myY;//バーカ
                     bullet.v = -15;//玉発射スピード
                     bullet.inUse = true;
                     playSE(shotAudio);
