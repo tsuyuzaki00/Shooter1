@@ -425,7 +425,7 @@ window.onload = function()
                     setTimeout(drawPlayer,5000);
                 }
             }
-            if (keys[90 /* ｚ */])
+            else if (keys[90 /* ｚ */])
             {
                 if (lastShoot == undefined || 200 < tick - lastShoot)
                 {
@@ -445,7 +445,7 @@ window.onload = function()
 
                     bullet.x = myX;
                     bullet.y = myY;
-                    bullet.v = 0.5;//玉発射スピード
+                    bullet.v = 1;//玉発射スピード
                     bullet.inUse = true;
                     playSE(shotAudio);
                     lastShoot = tick;
