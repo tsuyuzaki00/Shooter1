@@ -13,7 +13,9 @@
 		// Gemapad API に対応しているか調べる
 		// ------------------------------------------------------------
 		if(!(window.Gamepad)) return;
+    console.log(window.Gamepad);
 		if(!(navigator.getGamepads)) return;
+    console.log(navigator.Gamepad);
 
 		// ------------------------------------------------------------
 		// "aaa" という ID 属性のエレメントを取得する
@@ -28,9 +30,11 @@
 
 			// ゲームパッドリストを取得する
 			var gamepad_list = navigator.getGamepads();
+      console.log(gamepad_list);
 
 			// ゲームパッドリスト内のアイテム総数を取得する
 			var num = gamepad_list.length;
+      console.log(num);
 
 			var i;
 			for(i=0;i < num;i++){
@@ -44,6 +48,7 @@
 				// ゲームパッドのインデックス値
 				// ------------------------------------------------------------
 				str += "index: " + gamepad.index + "\n";
+        console.log(gamepad.index);
 
 				// ------------------------------------------------------------
 				// タイムスタンプ情報
