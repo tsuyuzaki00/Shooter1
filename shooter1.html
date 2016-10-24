@@ -57,12 +57,18 @@ function playSE(audio)
 
 var bgReady = false;
 var bgImg = new Image();
+var Dragon = new Image();
 bgImg.onload = function()
 {
     bgReady = true;
 };
+Dragon.Enemy = function()
+{
+    canvas = true;
+};
 // https://www.nasa.gov/mission_pages/hubble/multimedia/index.html
 bgImg.src = 'hubble_friday_05062016.jpg';
+Dragon.src = 'doragon_head.jpg';
 
 bgmAudio.loop = 'true';
 bgmAudio.play();
@@ -78,7 +84,7 @@ function Enemy(canvas)
     var explode = new Explode();//爆発します
 
     var bullets = [];//弾丸
-    var er = 20; // enemy radius
+    var er = 15; // enemy radius
     var br = 10; // bullet radius
 
     function spawn()
@@ -201,8 +207,8 @@ function Enemy(canvas)
         }
         bullets.forEach(function(bullet)
         {
-            bullet.x += dt*bullet.vx/1000;
-            bullet.y += dt*bullet.vy/1000;
+            bullet.x += dt*bullet.vx/500;
+            bullet.y += dt*bullet.vy/500;
             bullet.life -= dt/100/10.0;
         });
 
