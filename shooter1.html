@@ -255,7 +255,7 @@ function init(canvas, n)
     }
 }
 
-window.onload = function()//プレイヤー操作
+window.onload = function()//プレイヤー操作,ステージ管理
 {
 
     var canvas = document.getElementsByTagName('canvas')[0];
@@ -487,6 +487,19 @@ window.onload = function()//プレイヤー操作
             ctx.fillStyle = 'skyBlue';
             ctx.arc(myX, myY+8, myR, 0, Math.PI*2, false);
             ctx.fill();
+            if(numEnemies >= 5)
+            {
+              ctx.beginPath();
+              ctx.fillStyle = 'blue';
+              ctx.moveTo(myX+ 20, myY - 20);
+              ctx.lineTo(myX + 30, myY + 20);
+              ctx.lineTo(myX + 10, myY + 20);
+              ctx.fill();
+              ctx.beginPath();
+              ctx.fillStyle = 'skyBlue';
+              ctx.arc(myX+20, myY+8, myR, 0, Math.PI*2, false);
+              ctx.fill();
+            }
         }
 
         bullets && bullets.forEach(function(bullet)//球の形設定
