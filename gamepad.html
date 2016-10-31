@@ -44,10 +44,13 @@
 	// ------------------------------------------------------------
 	var element_container = document.getElementById("container_01");
 
-	if(!(window.Gamepad)){
+	if(!(window.Gamepad))
+	{
 		ElementSetTextContent(element_container,"Gamepad API に未対応");
 		return;
-	}else{
+	}
+	else
+	{
 		ElementSetTextContent(element_container,"ゲームパッドを再接続して、何らかの入力操作を行います。");
 	}
 
