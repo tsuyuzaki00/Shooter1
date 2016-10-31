@@ -388,7 +388,7 @@ window.onload = function()//プレイヤー操作,ステージ管理
             drawStatus = true;
             break;
         case Status.gameOver:
-            msg = 'GAME OVER';
+            msg = 'あきらめるな!!!';
             drawEnemies = true;
             drawStatus = true;
             break;
@@ -491,13 +491,26 @@ window.onload = function()//プレイヤー操作,ステージ管理
             {
               ctx.beginPath();
               ctx.fillStyle = 'blue';
-              ctx.moveTo(myX+ 20, myY - 20);
+              ctx.moveTo(myX + 20, myY - 20);
               ctx.lineTo(myX + 30, myY + 20);
               ctx.lineTo(myX + 10, myY + 20);
               ctx.fill();
               ctx.beginPath();
               ctx.fillStyle = 'skyBlue';
               ctx.arc(myX+20, myY+8, myR, 0, Math.PI*2, false);
+              ctx.fill();
+            }
+            if(numEnemies >= 7)
+            {
+              ctx.beginPath();
+              ctx.fillStyle = 'yellow';
+              ctx.moveTo(myX - 20, myY - 20);
+              ctx.lineTo(myX - 10, myY + 20);
+              ctx.lineTo(myX - 30, myY + 20);
+              ctx.fill();
+              ctx.beginPath();
+              ctx.fillStyle = 'skyBlue';
+              ctx.arc(myX-20, myY+8, myR, 0, Math.PI*2, false);
               ctx.fill();
             }
         }
@@ -545,6 +558,13 @@ window.onload = function()//プレイヤー操作,ステージ管理
             ctx.textBaseline = 'top';
             var s = "enemie(s): " + remainingEnemies;
             ctx.fillText(s, canvas.width - 10,  0);
+
+            ctx.font = '20pt Calibri';
+            ctx.fillStyle = 'white';
+            ctx.textAlign = 'right';
+            ctx.textBaseline = 'bottom';
+            var d = "↑↓→←：移動、Space:撃つ";
+            ctx.fillText(d, canvas.width ,canvas.height);
         }
 
         if (msg)//文字サイズ設定
