@@ -73,7 +73,7 @@ Dragon.src = 'doragon_head.jpg';
 bgmAudio.loop = 'true';
 bgmAudio.play();
 
-function Enemy(canvas)
+function Enemy(canvas)//敵の動き
 {
 
     var x, y;//敵の最初の位置
@@ -92,14 +92,15 @@ function Enemy(canvas)
         x = canvas.width*Math.random();
         y = -er;
         vx = 150*Math.random() - 50;
-        vy = 150*Math.random() + 50;
+        vy = 150*Math.random() + 100;
     };
     spawn();
 
-    var lifeProp = [];//{color:色, fireP:, numB:敵の玉出現数, daze:敵の振動}
+    var lifeProp = [];
+    //{color:色, fireP:ファイアを出す間隔, numB:敵の玉出現数, daze:敵の振動幅}
     lifeProp[3] = { color: 'white',  fireP: 1, numB:  1, daze: 0 };
-    lifeProp[2] = { color: 'yellow', fireP: 0.5, numB: 5, daze: 10 };
-    lifeProp[1] = { color: 'red',    fireP: 0.1,  numB: 8, daze: 15 };
+    lifeProp[2] = { color: 'yellow', fireP: 1, numB: 5, daze: 3 };
+    lifeProp[1] = { color: 'red',    fireP: 1,  numB: 10  , daze: 5 };
 
     this.draw = function(ctx)
     {
@@ -197,7 +198,7 @@ function Enemy(canvas)
             x += dt*vx/1000;
             x += lifeProp[life].daze*Math.cos(th);
             th += 1.5*dt*2*Math.PI/1000;
-            y += dt*vy/800;
+            y += dt*vy/1000;
             if (x < -er
             || canvas.width + er < x
             || canvas.height + er < y)
@@ -254,7 +255,7 @@ function init(canvas, n)
     }
 }
 
-window.onload = function()
+window.onload = function()//プレイヤー操作
 {
 
     var canvas = document.getElementsByTagName('canvas')[0];
@@ -330,16 +331,17 @@ window.onload = function()
         var drawEnemies = false;
         var drawPlayer = false;
         var drawStatus = false;
+        var stageCount;
 
         switch (status)
         {
         case Status.title:
-            msg = 'Press space to start!!!';
-            numEnemies = 3;
+            msg = '目標！ステージ5';
+            numEnemies = 3;//最初の敵の数
             break;
         case Status.toStart:
             myX = canvas.width/2;
-            myY = 4*canvas.height/5;
+            myY = 3*canvas.height/5;
             bullets = [];
             init(canvas, numEnemies);
             status = Status.countDown;
@@ -369,7 +371,8 @@ window.onload = function()
             drawStatus = true;
             break;
         case Status.gameClear:
-            msg = 'GAME CLEAR!!!';
+            stageCount = numEnemies-3;
+            msg = 'STAGE' + stageCount + ' CLEAR!!!';
             drawEnemies = true;
             drawPlayer = true;
             drawStatus = true;
@@ -395,8 +398,8 @@ window.onload = function()
 
         if (drawPlayer)
         {
-            if (keys[39 /*Right*/]) { myX += 5; }
-            if (keys[37 /*Left */]) { myX -= 5; }
+            if (keys[39 /*Right*/]) { myX += 1; }
+            if (keys[37 /*Left */]) { myX -= 1; }
             if (keys[38 /*Up   */]) { myY -= 5; }
             if (keys[40 /*Down */]) { myY += 5; }
             if (keys[32 /* space */])
@@ -422,7 +425,6 @@ window.onload = function()
                     bullet.inUse = true;
                     playSE(shotAudio);
                     lastShoot = tick;
-                    setTimeout(drawPlayer,5000);
                 }
             }
             else if (keys[90 /* ｚ */])
@@ -453,9 +455,9 @@ window.onload = function()
             }
         }
 
-        var myR = 3;
+        var myR = 5;
 
-        drawEnemies && enemies.forEach(function(enemy)
+        drawEnemies && enemies.forEach(function(enemy)//敵の形設定
         {
             enemy.update();
             if (enemy.isAlive())
@@ -476,18 +478,18 @@ window.onload = function()
         if (drawPlayer)//乗り物形作成
         {
             ctx.beginPath();
-            ctx.fillStyle = 'green';
-            ctx.moveTo(myX, myY - 10);
-            ctx.lineTo(myX + 10, myY + 10);
-            ctx.lineTo(myX - 10, myY + 10);
+            ctx.fillStyle = 'red';
+            ctx.moveTo(myX, myY - 20);
+            ctx.lineTo(myX + 10, myY + 20);
+            ctx.lineTo(myX - 10, myY + 20);
             ctx.fill();
             ctx.beginPath();
             ctx.fillStyle = 'skyBlue';
-            ctx.arc(myX, myY, myR, 0, Math.PI*2, false);
+            ctx.arc(myX, myY+8, myR, 0, Math.PI*2, false);
             ctx.fill();
         }
 
-        bullets && bullets.forEach(function(bullet)
+        bullets && bullets.forEach(function(bullet)//球の形設定
         {
             if (!bullet.inUse) return;
 
@@ -532,7 +534,7 @@ window.onload = function()
             ctx.fillText(s, canvas.width - 10,  0);
         }
 
-        if (msg)
+        if (msg)//文字サイズ設定
         {
             ctx.font = '40pt Calibri';
             ctx.fillStyle = 'white';
