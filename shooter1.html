@@ -344,7 +344,7 @@ window.onload = function()//プレイヤー操作,ステージ管理
             msg = '目標！ステージ5';
             numEnemies = 3;//最初の敵の数
             break;
-        case Status.toStart:
+        case Status.toStart:0
             myX = canvas.width/2;
             myY = 3*canvas.height/5;
             bullets = [];
@@ -393,7 +393,7 @@ window.onload = function()//プレイヤー操作,ステージ管理
             drawStatus = true;
             break;
         case Status.gameOver:
-            msg = '100円[]←〇';
+            msg = 'GAMEOVER';
             drawEnemies = true;
             drawStatus = true;
             break;
@@ -431,6 +431,23 @@ window.onload = function()//プレイヤー操作,ステージ管理
                     playSE(shotAudio);
                     lastShoot = tick;
                 }
+                if(numEnemies >= 4)
+                {
+                  if (lastShoot == undefined || 500 < tick - lastShoot)
+                  {
+                      var bulletNotInUse = bullets.filter(function(bullet)
+                      {
+                          return !bullet.inUse;
+                      });
+
+                      bullet.x = myX+20;
+                      bullet.y = myY;
+                      bullet.v = 5;//玉発射スピード
+                      bullet.inUse = true;
+                      playSE(shotAudio);
+                      lastShoot = tick;
+                  }
+                }
             }
         }
 
@@ -466,30 +483,8 @@ window.onload = function()//プレイヤー操作,ステージ管理
             ctx.fillStyle = 'skyBlue';
             ctx.arc(myX, myY+8, myR, 0, Math.PI*2, false);
             ctx.fill();
-            if(numEnemies >= 5)
+            if(numEnemies >= 4)
             {
-              if (lastShoot == undefined || 500 < tick - lastShoot)
-              {
-                  var bulletNotInUse = bullets.filter(function(bullet)
-                  {
-                      return !bullet.inUse;
-                  });
-                  var bullet;
-                  if (0 < bulletNotInUse.length)
-                  {
-                      bullet = bulletNotInUse[0];
-                  } else
-                  {
-                      bullet = {};
-                      bullets.push(bullet);
-                  }
-                  bullet.x = myX+20;
-                  bullet.y = myY;
-                  bullet.v = 5;//玉発射スピード
-                  bullet.inUse = true;
-                  playSE(shotAudio);
-                  lastShoot = tick;
-              }
               ctx.beginPath();
               ctx.fillStyle = 'blue';
               ctx.moveTo(myX + 20, myY - 20);
@@ -501,30 +496,8 @@ window.onload = function()//プレイヤー操作,ステージ管理
               ctx.arc(myX+20, myY+8, myR, 0, Math.PI*2, false);
               ctx.fill();
             }
-            if(numEnemies >= 10)
+            if(numEnemies >= 5 )
             {
-              if (lastShoot == undefined || 500 < tick - lastShoot)
-              {
-                  var bulletNotInUse = bullets.filter(function(bullet)
-                  {
-                      return !bullet.inUse;
-                  });
-                  var bullet;
-                  if (0 < bulletNotInUse.length)
-                  {
-                      bullet = bulletNotInUse[0];
-                  } else
-                  {
-                      bullet = {};
-                      bullets.push(bullet);
-                  }
-                  bullet.x = myX-20;
-                  bullet.y = myY;
-                  bullet.v = -10;//玉発射スピード
-                  bullet.inUse = true;
-                  playSE(shotAudio);
-                  lastShoot = tick;
-              }
               ctx.beginPath();
               ctx.fillStyle = 'yellow';
               ctx.moveTo(myX - 20, myY - 20);
@@ -593,7 +566,7 @@ window.onload = function()//プレイヤー操作,ステージ管理
         if (msg)//文字サイズ設定
         {
             ctx.font = '40pt Calibri';
-            ctx.fillStyle = 'yellow';
+            ctx.fillStyle = 'white';
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
             ctx.fillText(msg, canvas.width/2, canvas.height/2);
