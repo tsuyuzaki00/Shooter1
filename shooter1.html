@@ -393,7 +393,7 @@ window.onload = function()//プレイヤー操作,ステージ管理
             drawStatus = true;
             break;
         case Status.gameOver:
-            msg = 'あきらめるな!!!';
+            msg = '100円[]←〇';
             drawEnemies = true;
             drawStatus = true;
             break;
@@ -409,7 +409,7 @@ window.onload = function()//プレイヤー操作,ステージ管理
             if (keys[40 /*Down */]) { myY += 5; }
             if (keys[32 /* space */])
             {
-                if (lastShoot == undefined || 200 < tick - lastShoot)
+                if (lastShoot == undefined || 300 < tick - lastShoot)
                 {
                     var bulletNotInUse = bullets.filter(function(bullet)
                     {
@@ -427,32 +427,6 @@ window.onload = function()//プレイヤー操作,ステージ管理
                     bullet.x = myX;
                     bullet.y = myY;
                     bullet.v = -15;//玉発射スピード
-                    bullet.inUse = true;
-                    playSE(shotAudio);
-                    lastShoot = tick;
-                }
-            }
-            else if (keys[90 /* ｚ */])
-            {
-                if (lastShoot == undefined || 200 < tick - lastShoot)
-                {
-                    var bulletNotInUse = bullets.filter(function(bullet)
-                    {
-                        return !bullet.inUse;
-                    });
-                    var bullet;
-                    if (0 < bulletNotInUse.length)
-                    {
-                        bullet = bulletNotInUse[0];
-                    } else
-                    {
-                        bullet = {};
-                        bullets.push(bullet);
-                    }
-
-                    bullet.x = myX;
-                    bullet.y = myY;
-                    bullet.v = 1;//玉発射スピード
                     bullet.inUse = true;
                     playSE(shotAudio);
                     lastShoot = tick;
@@ -494,6 +468,28 @@ window.onload = function()//プレイヤー操作,ステージ管理
             ctx.fill();
             if(numEnemies >= 5)
             {
+              if (lastShoot == undefined || 500 < tick - lastShoot)
+              {
+                  var bulletNotInUse = bullets.filter(function(bullet)
+                  {
+                      return !bullet.inUse;
+                  });
+                  var bullet;
+                  if (0 < bulletNotInUse.length)
+                  {
+                      bullet = bulletNotInUse[0];
+                  } else
+                  {
+                      bullet = {};
+                      bullets.push(bullet);
+                  }
+                  bullet.x = myX+20;
+                  bullet.y = myY;
+                  bullet.v = 5;//玉発射スピード
+                  bullet.inUse = true;
+                  playSE(shotAudio);
+                  lastShoot = tick;
+              }
               ctx.beginPath();
               ctx.fillStyle = 'blue';
               ctx.moveTo(myX + 20, myY - 20);
@@ -505,8 +501,30 @@ window.onload = function()//プレイヤー操作,ステージ管理
               ctx.arc(myX+20, myY+8, myR, 0, Math.PI*2, false);
               ctx.fill();
             }
-            if(numEnemies >= 7)
+            if(numEnemies >= 10)
             {
+              if (lastShoot == undefined || 500 < tick - lastShoot)
+              {
+                  var bulletNotInUse = bullets.filter(function(bullet)
+                  {
+                      return !bullet.inUse;
+                  });
+                  var bullet;
+                  if (0 < bulletNotInUse.length)
+                  {
+                      bullet = bulletNotInUse[0];
+                  } else
+                  {
+                      bullet = {};
+                      bullets.push(bullet);
+                  }
+                  bullet.x = myX-20;
+                  bullet.y = myY;
+                  bullet.v = -10;//玉発射スピード
+                  bullet.inUse = true;
+                  playSE(shotAudio);
+                  lastShoot = tick;
+              }
               ctx.beginPath();
               ctx.fillStyle = 'yellow';
               ctx.moveTo(myX - 20, myY - 20);
@@ -575,7 +593,7 @@ window.onload = function()//プレイヤー操作,ステージ管理
         if (msg)//文字サイズ設定
         {
             ctx.font = '40pt Calibri';
-            ctx.fillStyle = 'white';
+            ctx.fillStyle = 'yellow';
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
             ctx.fillText(msg, canvas.width/2, canvas.height/2);
