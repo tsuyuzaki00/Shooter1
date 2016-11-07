@@ -56,19 +56,22 @@ function playSE(audio)
 }
 
 var bgReady = false;
+var eneImg  = false;
 var bgImg = new Image();
-var Dragon = new Image();
+var dragonImg = new Image();
+
 bgImg.onload = function()
 {
     bgReady = true;
 };
-Dragon.Enemy = function()
+
+dragonImg.onload = function()
 {
-    canvas = true;
+    eneImg = true;
 };
 // https://www.nasa.gov/mission_pages/hubble/multimedia/index.html
 bgImg.src = 'hubble_friday_05062016.jpg';
-Dragon.src = 'doragon_head.jpg';
+dragonImg.src = 'doragon_head.jpg';
 
 bgmAudio.loop = 'true';
 bgmAudio.play();
@@ -84,7 +87,7 @@ function Enemy(canvas)//敵の動き
     var explode = new Explode();//爆発します
 
     var bullets = [];//弾丸
-    var er = 15; // enemy radius
+    var er = 12; // enemy radius
     var br = 10; // bullet radius
 
     function spawn()
@@ -108,9 +111,11 @@ function Enemy(canvas)//敵の動き
         if (dying)
         {
             explode.draw(ctx, x, y);
-        } else if (1 <= life)
+        }
+        else if (1 <= life)
         {
             ctx.beginPath();
+            ctx.drawImage(dragonImg, x-25, y-5, 50, 50);
             ctx.fillStyle = lifeProp[life].color;
             ctx.arc(x, y, er, 0, Math.PI*2, false);
             ctx.fill();
@@ -398,8 +403,8 @@ window.onload = function()//プレイヤー操作,ステージ管理
 
         if (drawPlayer)
         {
-            if (keys[39 /*Right*/]) { myX += 1; }
-            if (keys[37 /*Left */]) { myX -= 1; }
+            if (keys[39 /*Right*/]) { myX += 2; }
+            if (keys[37 /*Left */]) { myX -= 2; }
             if (keys[38 /*Up   */]) { myY -= 5; }
             if (keys[40 /*Down */]) { myY += 5; }
             if (keys[32 /* space */])
