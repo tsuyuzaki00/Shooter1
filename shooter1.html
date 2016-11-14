@@ -90,20 +90,20 @@ function Enemy(canvas)//敵の動き
     var er = 12; // enemy radius
     var br = 10; // bullet radius
 
+    var lifeProp = [];
+    //{color:色, fireP:ファイアを出す間隔, numB:敵の玉出現数, daze:敵の振動幅}
+    lifeProp[3] = { color: 'white',  fireP: 1, numB:  1, daze: 0, spead: 1};
+    lifeProp[2] = { color: 'yellow', fireP: 1, numB: 3, daze: 5, spead:1/2};
+    lifeProp[1] = { color: 'red',    fireP: 1,  numB: 8  , daze: 10, spead: 1/2};
+
     function spawn()
     {//敵を生み出す
         x = canvas.width*Math.random();
         y = -er;
         vx = 150*Math.random() - 50;
-        vy = 150*Math.random() + 100;
+        vy = 100*Math.random() + 100 * lifeProp[life].spead;
     };
     spawn();
-
-    var lifeProp = [];
-    //{color:色, fireP:ファイアを出す間隔, numB:敵の玉出現数, daze:敵の振動幅}
-    lifeProp[3] = { color: 'white',  fireP: 1, numB:  1, daze: 0 };
-    lifeProp[2] = { color: 'yellow', fireP: 1, numB: 5, daze: 3 };
-    lifeProp[1] = { color: 'red',    fireP: 1,  numB: 10  , daze: 5 };
 
     this.draw = function(ctx)
     {
@@ -274,7 +274,7 @@ window.onload = function()//プレイヤー操作,ステージ管理
     var status = Status.title;
 
     var count;
-    var myX, myY;
+    var myX, myY, mySpead;
     var bullets, lastShoot;
     var explode = new Explode();
     var numEnemies;
@@ -342,11 +342,12 @@ window.onload = function()//プレイヤー操作,ステージ管理
         {
         case Status.title:
             msg = '目標！ステージ5';
-            numEnemies = 3;//最初の敵の数
+            numEnemies = 1;//最初の敵の数
             break;
         case Status.toStart:0
             myX = canvas.width/2;
-            myY = 3*canvas.height/5;
+            myY = 9*canvas.height/10;
+            mySpead = 0;
             bullets = [];
             init(canvas, numEnemies);
             status = Status.countDown;
@@ -376,7 +377,7 @@ window.onload = function()//プレイヤー操作,ステージ管理
             drawStatus = true;
             break;
         case Status.gameClear:
-            stageCount = numEnemies-3;
+            stageCount = numEnemies-1;
             msg = 'STAGE' + stageCount + ' CLEAR!!!';
             drawEnemies = true;
             drawPlayer = true;
@@ -403,13 +404,15 @@ window.onload = function()//プレイヤー操作,ステージ管理
 
         if (drawPlayer)
         {
-            if (keys[39 /*Right*/]) { myX += 2; }
-            if (keys[37 /*Left */]) { myX -= 2; }
-            if (keys[38 /*Up   */]) { myY -= 5; }
-            if (keys[40 /*Down */]) { myY += 5; }
+            if (keys[39 /*Right*/]) { myX += 3 + mySpead; }
+            if (keys[37 /*Left */]) { myX -= 3 + mySpead; }
+            if (keys[38 /*Up   */]) { mySpead = +2/*myY -= 5;*/ }
+            else{mySpead = 0}
+            if (keys[40 /*Down */]) { mySpead = -2;/*myY += 5;*/ }
+            else {mySpead = 0}
             if (keys[32 /* space */])
             {
-                if (lastShoot == undefined || 300 < tick - lastShoot)
+                if (lastShoot == undefined || 600 < tick - lastShoot)
                 {
                     var bulletNotInUse = bullets.filter(function(bullet)
                     {
@@ -426,12 +429,12 @@ window.onload = function()//プレイヤー操作,ステージ管理
                     }
                     bullet.x = myX;
                     bullet.y = myY;
-                    bullet.v = -15;//玉発射スピード
+                    bullet.v = -30;//玉発射スピード
                     bullet.inUse = true;
                     playSE(shotAudio);
                     lastShoot = tick;
                 }
-                if(numEnemies >= 4)
+                if(numEnemies >= 5)
                 {
                   if (lastShoot == undefined || 500 < tick - lastShoot)
                   {
@@ -451,7 +454,7 @@ window.onload = function()//プレイヤー操作,ステージ管理
             }
         }
 
-        var myR = 5;
+        var myR = 7;
 
         drawEnemies && enemies.forEach(function(enemy)//敵の形設定
         {
@@ -474,44 +477,18 @@ window.onload = function()//プレイヤー操作,ステージ管理
         if (drawPlayer)//乗り物形作成
         {
             ctx.beginPath();
-            ctx.fillStyle = 'red';
-            ctx.moveTo(myX, myY - 20);
+            ctx.fillStyle = 'green';
+            ctx.moveTo(myX, myY-100);
             ctx.lineTo(myX + 10, myY + 20);
             ctx.lineTo(myX - 10, myY + 20);
             ctx.fill();
             ctx.beginPath();
             ctx.fillStyle = 'skyBlue';
-            ctx.arc(myX, myY+8, myR, 0, Math.PI*2, false);
+            ctx.arc(myX, myY+5, myR, 0, Math.PI*2, false);
             ctx.fill();
-            if(numEnemies >= 4)
-            {
-              ctx.beginPath();
-              ctx.fillStyle = 'blue';
-              ctx.moveTo(myX + 20, myY - 20);
-              ctx.lineTo(myX + 30, myY + 20);
-              ctx.lineTo(myX + 10, myY + 20);
-              ctx.fill();
-              ctx.beginPath();
-              ctx.fillStyle = 'skyBlue';
-              ctx.arc(myX+20, myY+8, myR, 0, Math.PI*2, false);
-              ctx.fill();
-            }
-            if(numEnemies >= 5 )
-            {
-              ctx.beginPath();
-              ctx.fillStyle = 'yellow';
-              ctx.moveTo(myX - 20, myY - 20);
-              ctx.lineTo(myX - 10, myY + 20);
-              ctx.lineTo(myX - 30, myY + 20);
-              ctx.fill();
-              ctx.beginPath();
-              ctx.fillStyle = 'skyBlue';
-              ctx.arc(myX-20, myY+8, myR, 0, Math.PI*2, false);
-              ctx.fill();
-            }
         }
 
-        bullets && bullets.forEach(function(bullet)//球の形設定
+        bullets && bullets.forEach(function(bullet)//プレイヤーが撃つ球の形設定
         {
             if (!bullet.inUse) return;
 
@@ -519,7 +496,7 @@ window.onload = function()//プレイヤー操作,ステージ管理
             ctx.fillStyle = 'yellow';
             var x = bullet.x;
             var y = bullet.y;
-            ctx.arc(x, y, 10, 60, Math.PI*2, false);
+            ctx.arc(x, y, 5, 0, Math.PI*2, false);
             ctx.fill();
             drawEnemies && enemies.forEach(function(enemy)
             {
@@ -559,7 +536,7 @@ window.onload = function()//プレイヤー操作,ステージ管理
             ctx.fillStyle = 'white';
             ctx.textAlign = 'right';
             ctx.textBaseline = 'bottom';
-            var d = "↑↓→←：移動、Space:撃つ";
+            var d = "→←：移動、Space:撃つ、↓スピードダウン";
             ctx.fillText(d, canvas.width ,canvas.height);
         }
 
