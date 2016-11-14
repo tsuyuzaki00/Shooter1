@@ -93,8 +93,8 @@ function Enemy(canvas)//敵の動き
     var lifeProp = [];
     //{color:色, fireP:ファイアを出す間隔, numB:敵の玉出現数, daze:敵の振動幅}
     lifeProp[3] = { color: 'white',  fireP: 1, numB:  1, daze: 0, spead: 1};
-    lifeProp[2] = { color: 'yellow', fireP: 1, numB: 3, daze: 5, spead:1/2};
-    lifeProp[1] = { color: 'red',    fireP: 1,  numB: 8  , daze: 10, spead: 1/2};
+    lifeProp[2] = { color: 'yellow', fireP: 1, numB: 3, daze: 5, spead:2/3};
+    lifeProp[1] = { color: 'red',    fireP: 1,  numB: 8  , daze: 8, spead: 1/2};
 
     function spawn()
     {//敵を生み出す
@@ -478,7 +478,7 @@ window.onload = function()//プレイヤー操作,ステージ管理
         {
             ctx.beginPath();
             ctx.fillStyle = 'green';
-            ctx.moveTo(myX, myY-100);
+            ctx.moveTo(myX, myY-150);
             ctx.lineTo(myX + 10, myY + 20);
             ctx.lineTo(myX - 10, myY + 20);
             ctx.fill();
