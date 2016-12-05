@@ -76,6 +76,9 @@ dragonImg.src = 'doragon_head.jpg';
 bgmAudio.loop = 'true';
 bgmAudio.play();
 
+var Score = 0;
+var PastScore = 0;
+
 function Enemy(canvas)//敵の動き
 {
 
@@ -225,18 +228,19 @@ function Enemy(canvas)//敵の動き
         lastTick = tick;
     };
 
-    this.die = function()
+    this.die = function()//敵の爆発設定
     {
         dying = true;
         playSE(explosionAudio);
         explode.reset();
     };
 
-    this.damage = function()
+    this.damage = function()//敵変動設定
     {
         if (--life <= 0)
         {
             this.die();
+            Score += 1;
         } else
         {
             this.fire();
@@ -299,7 +303,7 @@ window.onload = function()//プレイヤー操作,ステージ管理
         ctx.save();
         ctx.clearRect(0, 0, w, h);
 
-        if (bgReady)
+        if (bgReady)//背景の作成
         {
             var sx = (bgImg.width - canvas.width)/2;
             var dy = (tick - startTick)/100 % bgImg.height;
@@ -333,6 +337,7 @@ window.onload = function()//プレイヤー操作,ステージ管理
         }
 
         var msg;
+        var maxscore
         var drawEnemies = false;
         var drawPlayer = false;
         var drawStatus = false;
@@ -342,7 +347,9 @@ window.onload = function()//プレイヤー操作,ステージ管理
         {
         case Status.title:
             msg = '目標！ステージ5';
-            numEnemies = 1;//最初の敵の数
+            maxscore　= '前回'+PastScore+'体撃破';
+            numEnemies = 1;//最初の敵の
+            Score = 0;
             break;
         case Status.toStart:0
             myX = canvas.width/2;
@@ -397,6 +404,7 @@ window.onload = function()//プレイヤー操作,ステージ管理
             msg = 'GAMEOVER';
             drawEnemies = true;
             drawStatus = true;
+            PastScore = Score;
             break;
         default:
             console.log('unknown status: ' + status);
@@ -406,7 +414,7 @@ window.onload = function()//プレイヤー操作,ステージ管理
         {
             if (keys[39 /*Right*/]) { myX += 3 + mySpead; }
             if (keys[37 /*Left */]) { myX -= 3 + mySpead; }
-            if (keys[38 /*Up   */]) { mySpead = +2/*myY -= 5;*/ }
+            if (keys[38 /*Up   */]) { /*myY -= 5;*/ }
             else{mySpead = 0}
             if (keys[40 /*Down */]) { mySpead = -2;/*myY += 5;*/ }
             else {mySpead = 0}
@@ -538,6 +546,13 @@ window.onload = function()//プレイヤー操作,ステージ管理
             ctx.textBaseline = 'bottom';
             var d = "→←：移動、Space:撃つ、↓スピードダウン";
             ctx.fillText(d, canvas.width ,canvas.height);
+
+            ctx.font = '20pt Calibri';
+            ctx.fillStyle = 'white';
+            ctx.textAlign = 'left';
+            ctx.textBaseline = 'top';
+            var c = Score+"体撃破";
+            ctx.fillText(c, 10 ,0);
         }
 
         if (msg)//文字サイズ設定
@@ -547,6 +562,14 @@ window.onload = function()//プレイヤー操作,ステージ管理
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
             ctx.fillText(msg, canvas.width/2, canvas.height/2);
+        }
+        if (maxscore)
+        {
+            ctx.font = '20pt Calibri';
+            ctx.fillStyle = 'white';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'top';
+            ctx.fillText(maxscore, canvas.width/2, 0);
         }
 
         ctx.restore();
