@@ -76,8 +76,9 @@ dragonImg.src = 'doragon_head.jpg';
 bgmAudio.loop = 'true';
 bgmAudio.play();
 
-var Score = 0;
+var DoragonScore = 0;
 var PastScore = 0;
+var size = 0;
 
 function Enemy(canvas)//敵の動き
 {
@@ -237,10 +238,15 @@ function Enemy(canvas)//敵の動き
 
     this.damage = function()//敵変動設定
     {
+      if(size == 10)
+      {
+          this.die();
+      }
+
         if (--life <= 0)
         {
             this.die();
-            Score += 1;
+            DoragonScore += 1;
         } else
         {
             this.fire();
@@ -349,7 +355,7 @@ window.onload = function()//プレイヤー操作,ステージ管理
             msg = '目標！ステージ5';
             maxscore　= '前回'+PastScore+'体撃破';
             numEnemies = 1;//最初の敵の
-            Score = 0;
+            DoragonScore = 0;
             break;
         case Status.toStart:0
             myX = canvas.width/2;
@@ -404,7 +410,7 @@ window.onload = function()//プレイヤー操作,ステージ管理
             msg = 'GAMEOVER';
             drawEnemies = true;
             drawStatus = true;
-            PastScore = Score;
+            PastScore = DoragonScore;
             break;
         default:
             console.log('unknown status: ' + status);
@@ -438,29 +444,44 @@ window.onload = function()//プレイヤー操作,ステージ管理
                     bullet.x = myX;
                     bullet.y = myY;
                     bullet.v = -30;//玉発射スピード
+                    size = 5;
                     bullet.inUse = true;
                     playSE(shotAudio);
                     lastShoot = tick;
                 }
-                if(numEnemies >= 5)
-                {
-                  if (lastShoot == undefined || 500 < tick - lastShoot)
-                  {
-                      var bulletNotInUse = bullets.filter(function(bullet)
-                      {
-                          return !bullet.inUse;
-                      });
-
-                      bullet.x = myX+20;
-                      bullet.y = myY;
-                      bullet.v = 5;//玉発射スピード
-                      bullet.inUse = true;
-                      playSE(shotAudio);
-                      lastShoot = tick;
-                  }
-                }
             }
-        }
+            if(DoragonScore >= 2)
+            {
+                if (keys[90 /* z */])
+                {
+                    if (lastShoot == undefined || 600 < tick - lastShoot)
+                    {
+                        var bulletNotInUse = bullets.filter(function(bullet)
+                        {
+                            return !bullet.inUse;
+                        });
+                        var bullet;
+                        if (0 < bulletNotInUse.length)
+                        {
+                            bullet = bulletNotInUse[0];
+                        } else
+                        {
+                            bullet = {};
+                            bullets.push(bullet);
+                        }
+                        bullet.x = myX;
+                        bullet.y = myY;
+                        bullet.v = -5//玉発射スピード
+                        bullet.inUse = true;
+                        //ctx.drawImage(dragonImg, x-25, y-5, 50, 50);
+                        size = 20;
+                        DoragonScore -= 2;
+                        playSE(shotAudio);
+                        lastShoot = tick;
+                    }
+                }
+              }
+          }
 
         var myR = 7;
 
@@ -504,7 +525,7 @@ window.onload = function()//プレイヤー操作,ステージ管理
             ctx.fillStyle = 'yellow';
             var x = bullet.x;
             var y = bullet.y;
-            ctx.arc(x, y, 5, 0, Math.PI*2, false);
+            ctx.arc(x, y, size, 0, Math.PI*2, false);
             ctx.fill();
             drawEnemies && enemies.forEach(function(enemy)
             {
@@ -540,18 +561,18 @@ window.onload = function()//プレイヤー操作,ステージ管理
             var s = "enemie(s): " + remainingEnemies;
             ctx.fillText(s, canvas.width - 10,  0);
 
-            ctx.font = '20pt Calibri';
+            ctx.font = '18pt Calibri';
             ctx.fillStyle = 'white';
             ctx.textAlign = 'right';
             ctx.textBaseline = 'bottom';
-            var d = "→←：移動、Space:撃つ、↓スピードダウン";
+            var d = "→←：移動、Space:発射、Z:撃破数2消費で大発射";
             ctx.fillText(d, canvas.width ,canvas.height);
 
             ctx.font = '20pt Calibri';
             ctx.fillStyle = 'white';
             ctx.textAlign = 'left';
             ctx.textBaseline = 'top';
-            var c = Score+"体撃破";
+            var c = DoragonScore+"体撃破";
             ctx.fillText(c, 10 ,0);
         }
 
