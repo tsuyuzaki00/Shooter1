@@ -76,7 +76,7 @@ dragonImg.src = 'doragon_head.jpg';
 bgmAudio.loop = 'true';
 bgmAudio.play();
 
-var DoragonScore = 0;
+var DragonScore = 0;
 var PastScore = 0;
 var size = 0;
 
@@ -246,7 +246,7 @@ function Enemy(canvas)//敵の動き
         if (--life <= 0)
         {
             this.die();
-            DoragonScore += 1;
+            DragonScore += 1;
         } else
         {
             this.fire();
@@ -348,14 +348,15 @@ window.onload = function()//プレイヤー操作,ステージ管理
         var drawPlayer = false;
         var drawStatus = false;
         var stageCount;
+        var PastStage = 0;
 
         switch (status)
         {
         case Status.title:
             msg = '目標！ステージ5';
-            maxscore　= '前回'+PastScore+'体撃破';
+            maxscore　= '前回'/*+PastStage+'ステージ '*/+PastScore+'体撃破';
             numEnemies = 1;//最初の敵の
-            DoragonScore = 0;
+            DragonScore = 0;
             break;
         case Status.toStart:0
             myX = canvas.width/2;
@@ -410,7 +411,8 @@ window.onload = function()//プレイヤー操作,ステージ管理
             msg = 'GAMEOVER';
             drawEnemies = true;
             drawStatus = true;
-            PastScore = DoragonScore;
+            PastScore = DragonScore;
+            PastStage = stageCount;
             break;
         default:
             console.log('unknown status: ' + status);
@@ -450,7 +452,7 @@ window.onload = function()//プレイヤー操作,ステージ管理
                     lastShoot = tick;
                 }
             }
-            if(DoragonScore >= 2)
+            if(DragonScore >= 1)
             {
                 if (keys[90 /* z */])
                 {
@@ -475,7 +477,7 @@ window.onload = function()//プレイヤー操作,ステージ管理
                         bullet.inUse = true;
                         //ctx.drawImage(dragonImg, x-25, y-5, 50, 50);
                         size = 20;
-                        DoragonScore -= 2;
+                        DragonScore -= 1;
                         playSE(shotAudio);
                         lastShoot = tick;
                     }
@@ -532,7 +534,8 @@ window.onload = function()//プレイヤー操作,ステージ管理
                 if (enemy.isAlive() && enemy.hit(x, y, 10))
                 {
                     enemy.damage();
-                    bullet.inUse = false;
+                    if(size >= 10){bullet.inUse = true;}
+                    else{bullet.inUse = false;}
                 }
             });
             bullet.y += bullet.v;
@@ -572,7 +575,7 @@ window.onload = function()//プレイヤー操作,ステージ管理
             ctx.fillStyle = 'white';
             ctx.textAlign = 'left';
             ctx.textBaseline = 'top';
-            var c = DoragonScore+"体撃破";
+            var c = DragonScore+"体撃破";
             ctx.fillText(c, 10 ,0);
         }
 
