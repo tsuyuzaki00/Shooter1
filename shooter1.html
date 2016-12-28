@@ -292,8 +292,11 @@ window.onload = function()//プレイヤー操作,ステージ管理
     var keys = [];
     document.onkeydown = function(e)//key押したらのコマンド習得
     {
-        if (!keys[e.keyCode]) keys[e.keyCode] = 0;
+        if (!keys[e.keyCode])
+      {
+        keys[e.keyCode] = 0;
         keys[e.keyCode]++;
+      }
     };
     document.onkeyup = function(e)//key離したらのコマンド習得
     {
